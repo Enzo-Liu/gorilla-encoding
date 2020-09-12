@@ -1,0 +1,11 @@
+* gorilla-encoding
+- encoding for time series
+- inspired by http://www.vldb.org/pvldb/vol8/p1816-teller.pdf
+
+** string key
+sorted, delta, dict
+
+** timestamp
+delta of delta
+
+** metric value
