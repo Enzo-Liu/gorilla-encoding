@@ -12,7 +12,7 @@ public class DictDeltaOfDelta extends DeltaOfDelta {
 
     @Override
     public byte[] getBytes() {
-        //TODO: add dick encoding
+        //TODO: add dict encoding
         return super.getBytes();
     }
 }
