@@ -1,27 +1,48 @@
 package cc.enzo.gorilla;
 
-import java.nio.ByteBuffer;
+import com.google.common.collect.Lists;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+
+import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 public class DeltaOfDelta {
-    private final int initTs;
+    private int initTs;
+    private int lastTs;
+    private int lastDelta;
+    private boolean inited;
+    ByteArrayDataOutput output = ByteStreams.newDataOutput();
+    private List<Integer> deltaOfDeltaList = Lists.newArrayList();
 
-    public DeltaOfDelta(int ts){
-        this.initTs = ts;
+    public DeltaOfDelta() {
     }
 
-    public void addValue(int ts){
-        //TODO
-        // naive implementation
-        /** 1. keep track of all the delta
-         *  2. find the delta that makes the sample space of `delta of delta` smallest
-         *     - maybe just use greedy, or just use the most used delta as base
-         *  3. calculate delta of delta
-         *  4. using dict to encoding this data
-         **/
+    public void addValue(int ts) {
+        if (!inited) {
+            this.initTs = ts;
+            this.inited = true;
+            this.lastTs = ts;
+            output.writeInt(this.initTs);
+        }
+
+        int delta = ts - this.lastTs;
+        int deltaOfDelta = delta - this.lastDelta;
+        this.lastTs = ts;
+        this.lastDelta = delta;
+        encode(output, deltaOfDelta);
     }
 
-    public ByteBuffer getBytes(){
-        //TODO
-        throw new UnsupportedOperationException("not implemented");
+    // raw encoding
+    protected void encode(ByteArrayDataOutput output, int deltaOfDelta) {
+        output.writeInt(deltaOfDelta);
+    }
+
+    public int getSize() {
+        return output.toByteArray().length;
+    }
+
+    public byte[] getBytes() {
+        return output.toByteArray();
     }
 }
